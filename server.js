@@ -5,7 +5,7 @@ var sanitizer = require('sanitizer');
 
 var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||
-  'mongodb://localhost/mydb';
+  'mongodb://localhost/gamerfriends';
 
 mongoose.connect(mongoUri);
 
