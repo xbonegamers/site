@@ -3,7 +3,11 @@ var app = express();
 var mongoose = require('mongoose');
 var sanitizer = require('sanitizer');
 
-mongoose.connect('mongodb://localhost/gamerfriends');
+var mongoUri = process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+  'mongodb://localhost/mydb';
+
+mongoose.connect(mongoUri);
 
 var db = mongoose.connection;
 var gamerSchema = mongoose.Schema({
