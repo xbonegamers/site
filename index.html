@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Find someone to game with!</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <base href="/">
+  </head>
+  <body ng-app="app" ng-controller="GamersCtrl as ctrl">
+    <header>
+      <div class="container">
+        <form name="addmyname" method="POST" ng-submit="ctrl.add()" class="form-inline">
+          I'm looking for someone to game with
+          <input type="text" name="gamertag" placeholder="gamertag" ng-model="ctrl.gamerTag" class="form-control">          
+          <button type="submit" id="add-tag" class="btn btn-default">Add Me</button>
+        </form>
+      </div>
+    </header>
+    <div class="container">
+      <div>        
+        <table class="table table-striped">
+          <tr ng-repeat="gamer in ctrl.gamers">
+            <td>
+              <a ng-href="http://live.xbox.com/en-US/Profile?gamertag={{gamer.gamerTag}}">{{gamer.gamerTag | decode}}</a>
+            </td>
+            <td>
+              {{gamer.created | fromTime}}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <script src="js/app.js"></script>
+  </body>
+</html>
