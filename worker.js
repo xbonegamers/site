@@ -7,17 +7,14 @@ var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||
   'mongodb://localhost/gamerfriends';
 
-if (process.env.REDISTOGO_URL) {
-  var redisToGo = url.parse(process.env.REDISTOGO_URL);
-  jobs = kue.createQueue({
-    redis: {
-      port: redisToGo.port,
-      host: redisToGo.hostname
-    }
-  });
-} else {
-  jobs = kue.createQueue();
-}
+kue.redis.createClient = function() {
+  var redisUrl = url.parse(process.env.REDISTOGO_URL);
+  var client = redis.createClient(redisUrl.port, redisUrl.hostname);
+  if (redisUrl.auth) {
+      client.auth(redisUrl.auth.split(":")[1]);
+  }
+  return client;
+};
 
 mongoose.connect(mongoUri);
 

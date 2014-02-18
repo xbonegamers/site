@@ -6,17 +6,14 @@ var url = require('url');
 var kue = require('kue');
 var jobs;
 
-if (process.env.REDISTOGO_URL) {
-  var redisToGo = url.parse(process.env.REDISTOGO_URL);
-  jobs = kue.createQueue({
-    redis: {
-      port: redisToGo.port,
-      host: redisToGo.hostname
-    }
-  });
-} else {
-  jobs = kue.createQueue();
-}
+kue.redis.createClient = function() {
+  var redisUrl = url.parse(process.env.REDISTOGO_URL);
+  var client = redis.createClient(redisUrl.port, redisUrl.hostname);
+  if (redisUrl.auth) {
+      client.auth(redisUrl.auth.split(":")[1]);
+  }
+  return client;
+};
 
 var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||
