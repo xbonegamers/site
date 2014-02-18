@@ -9,8 +9,10 @@ var jobs;
 if (process.env.REDISTOGO_URL) {
   var redisToGo = url.parse(process.env.REDISTOGO_URL);
   jobs = kue.createQueue({
-    port: redisToGo.port,
-    host: redisToGo.hostname
+    redis: {
+      port: redisToGo.port,
+      host: redisToGo.hostname
+    }
   });
 } else {
   jobs = kue.createQueue();
