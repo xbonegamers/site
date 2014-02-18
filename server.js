@@ -2,6 +2,19 @@ var express = require('express');
 var app = express();
 var mongoose = require('mongoose');
 var sanitizer = require('sanitizer');
+var url = require('url');
+var kue = require('kue');
+var jobs;
+
+if (process.env.REDISTOGO_URL) {
+  var redisToGo = url.parse(process.env.REDISTOGO_URL);
+  jobs = kue.createQueue({
+    port: redisToGo.port,
+    host: redisToGo.hostname
+  });
+} else {
+  jobs = kue.createQueue();
+}
 
 var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||
@@ -12,7 +25,8 @@ mongoose.connect(mongoUri);
 var db = mongoose.connection;
 var gamerSchema = mongoose.Schema({
   gamerTag: String,
-  created: {type: Date, default: Date.now}
+  created: {type: Date, default: Date.now},
+  xboxdata: Object
 });
 var Gamer = mongoose.model('Gamer', gamerSchema);
 
@@ -56,11 +70,14 @@ app.post('/gamers', function(req, res) {
     gamer.created = Date.now();
     gamer.gamerTag = gamerTag;
     gamer.save(function(err, g) {
-      if (exists) {
+      /*if (exists) {
         res.json(200);
-      } else {
+      } else {*/
+        jobs.create('gamer', {
+          gamerTag: gamerTag
+        }).save();
         res.json(201, g);
-      }
+      //}
     });
   });
 });
