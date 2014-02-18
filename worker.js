@@ -1,36 +1,7 @@
 var mongoose = require('mongoose');
 var rest = require('restler');
-var url = require('url');
-var kue = require('kue');
-var redis = require('kue/node_modules/redis');
-var jobs;
-var mongoUri = process.env.MONGOLAB_URI ||
-  process.env.MONGOHQ_URL ||
-  'mongodb://localhost/gamerfriends';
-
-kue.redis.createClient = function() {
-  var redisUrl = url.parse(process.env.REDISTOGO_URL);
-  var client = redis.createClient(redisUrl.port, redisUrl.hostname);
-  if (redisUrl.auth) {
-      client.auth(redisUrl.auth.split(":")[1]);
-  }
-  return client;
-};
-
-jobs = kue.createQueue();
-
-mongoose.connect(mongoUri);
-
-var db = mongoose.connection;
-var gamerSchema = mongoose.Schema({
-  gamerTag: String,
-  created: {type: Date, default: Date.now},
-  xboxdata: Object
-});
-var Gamer = mongoose.model('Gamer', gamerSchema);
-
-db.on('error', console.error.bind(console, 'connection error'));
-
+var jobs = require('./server').jobs;
+var Gamer = require('./server').schema.Gamer;
 var baseProfileUrl = 'https://www.xboxleaders.com/api/profile.json?gamertag=';
 
 var populateUser = function(gamerTag, done, xboxdata) {
