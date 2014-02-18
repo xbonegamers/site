@@ -15,7 +15,7 @@ kue.redis.createClient = function() {
   return client;
 };
 
-jobs = kue.createKue();
+jobs = kue.createQueue();
 
 var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||

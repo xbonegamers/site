@@ -16,7 +16,7 @@ kue.redis.createClient = function() {
   return client;
 };
 
-jobs = kue.createKue();
+jobs = kue.createQueue();
 
 mongoose.connect(mongoUri);
 
