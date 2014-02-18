@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var sanitizer = require('sanitizer');
 var url = require('url');
 var kue = require('kue');
+var redis = require('kue/node_modules/redis');
 var jobs;
 
 kue.redis.createClient = function() {

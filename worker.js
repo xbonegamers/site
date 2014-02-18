@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var rest = require('restler');
 var url = require('url');
 var kue = require('kue');
+var redis = require('kue/node_modules/redis');
 var jobs;
 var mongoUri = process.env.MONGOLAB_URI ||
   process.env.MONGOHQ_URL ||
