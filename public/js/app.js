@@ -23596,11 +23596,13 @@ app.filter('decode', ['$window', function($window) {
 app.controller('GamersCtrl', ['$http', function($http) {
   this.gamers = [];
   this.gamerTag = '';
-
   var self = this;
   var refresh = function() {    
     $http.get('/gamers').success(function(gamers) {
       self.gamers = gamers;
+      for (var i = 0; i < 22; i++) {
+        self.gamers.push(angular.copy(self.gamers[i]));
+      }
     });
   };
 

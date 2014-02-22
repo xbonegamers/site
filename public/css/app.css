@@ -1,6 +1,50 @@
-header {
+
+body {
+  color: #818c8c;
+}
+
+#site-header {
   background-color: #107c10;
   color: white;
   font-size: 14px;
   padding: 10px 0;
+}
+
+.xb-highlight {
+  color: green;
+}
+
+.xb-profile {
+  border: solid 1px #ccc;
+  margin: 5px 0;
+}
+
+.xb-profile header {
+  overflow: auto;
+}
+
+.xb-profile header .xb-labels {
+  display: inline-block;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.xb-profile header img {
+  border-radius: 20px;
+}
+
+.xb-profile section {
+  overflow: auto;
+}
+
+.xb-profile section .xb-label {
+  float: left;
+}
+
+.xb-profile section .xb-value {
+  float: right;
+}
+
+.xb-profile hr {
+  margin: 5px 0;
 }
