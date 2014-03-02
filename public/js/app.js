@@ -23756,7 +23756,7 @@ app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
     this.games.forEach(function(game) {
       if (game.selected) {
         noneSelected = false;
-        gameToGamers[game.label].forEach(function(gamer) {
+        (gameToGamers[game.label] || []).forEach(function(gamer) {
           if (!gamerTags[gamer.gamerTag]) {
             gamerTags[gamer.gamerTag] = true;
           }
