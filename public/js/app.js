@@ -20871,7 +20871,84 @@ var styleDirective = valueFn({
 
 })(window, document);
 
-!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}</style>');;/*! http://mths.be/he v0.3.6 by @mathias | MIT license */
+!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}</style>');;/*
+ * angular-modal v0.1.0
+ * (c) 2013 Brian Ford http://briantford.com
+ * License: MIT
+ */
+
+'use strict';
+
+angular.module('btford.modal', []).
+factory('btfModal', function ($compile, $rootScope, $controller, $q, $http, $templateCache) {
+  return function modalFactory (config) {
+
+    if ((+!!config.template) + (+!!config.templateUrl) !== 1) {
+      throw new Error('Expected modal to have exacly one of either `template` or `templateUrl`');
+    }
+
+    var template      = config.template,
+        controller    = config.controller || angular.noop,
+        controllerAs  = config.controllerAs,
+        container     = angular.element(config.container || document.body),
+        element       = null,
+        html;
+
+    if (config.template) {
+      var deferred = $q.defer();
+      deferred.resolve(config.template);
+      html = deferred.promise;
+    } else {
+      html = $http.get(config.templateUrl, {
+        cache: $templateCache
+      }).
+      then(function (response) {
+        return response.data;
+      });
+    }
+
+    function activate (locals) {
+      html.then(function (html) {
+        if (!element) {
+          attach(html, locals);
+        }
+      });
+    }
+
+    function attach (html, locals) {
+      element = angular.element(html);
+      container.prepend(element);
+      var scope = $rootScope.$new();
+      if (locals) {
+        for (var prop in locals) {
+          scope[prop] = locals[prop];
+        }
+      }
+      var ctrl = $controller(controller, { $scope: scope });
+      if (controllerAs) {
+        scope[controllerAs] = ctrl;
+      }
+      $compile(element)(scope);
+    }
+
+    function deactivate () {
+      if (element) {
+        element.remove();
+        element = null;
+      }
+    }
+
+    function active () {
+      return !!element;
+    }
+
+    return {
+      activate: activate,
+      deactivate: deactivate,
+      active: active
+    };
+  };
+});;/*! http://mths.be/he v0.3.6 by @mathias | MIT license */
 ;(function(root) {
 
 	// Detect free variables `exports`
@@ -23574,7 +23651,7 @@ var styleDirective = valueFn({
         makeGlobal();
     }
 }).call(this);
-;var app = angular.module('app', []);
+;var app = angular.module('app', ['btford.modal']);
 
 app.config(['$locationProvider', function($lp) {
   $lp.html5Mode(true);
@@ -23593,32 +23670,64 @@ app.filter('decode', ['$window', function($window) {
   };
 }]);
 
-app.controller('GamersCtrl', ['$scope', '$http', function($scope, $http) {
-  this.gamerSets = [];
-  this.games = [{
-    selected: false,
-    label: 'Battlefield 4'
-  }, {
-    selected: false,
-    label: 'Call of Duty: Ghosts'
-  }, {
-    selected: false,
-    label: 'Need For Speed'
-  }, {
-    selected: false,
-    label: 'Titanfall'
-  }];
+app.factory('games', ['$window', function($window) {
+  return $window.initialData.games.map(function(g) {
+    return g.name;
+  });
+}]);
+
+app.factory('myModal', ['btfModal', function (btfModal) {
+  return btfModal({
+    controller: 'AddMeCtrl',
+    controllerAs: 'modal',
+    templateUrl: 'add-me-modal.ng'
+  });
+}]).controller('AddMeCtrl', ['$http', 'myModal', 'games', function ($http, myModal, games) {
+  this.closeMe = myModal.deactivate;
+  this.games = games;
   this.gamerTag = '';
+  this.games = games.map(function(g){ return {label: g, selected: false};});
+
+
+  this.add = function() {
+    var selectedGames = this.games.filter(function(g) {
+      return g.selected;
+    }).map(function(g) {
+      return g.label;
+    });
+    var data = {
+      gamerTag: this.gamerTag,
+      games: selectedGames
+    };
+    $http.post('/gamers', {gamerData: data}).success(function(gamer, status) {
+      myModal.deactivate();
+    });
+  }.bind(this);
+}]);
+
+app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
+  function($scope, $http, myModal, games) {
+  this.showModal = myModal.activate;
+  this.gamerSets = [];
+  this.games = games.map(function(g){ return {label: g, selected: false};});
 
   var gameToGamers = {};
   var gamerTagToGamer = {};
   var nonFilteredGamers = [];
 
+  $scope.$watch(function() {
+    return myModal.active();
+  }, function(newVal, oldVal) {
+    if (!newVal && oldVal) {
+      refresh();
+    }
+  });
+
   var refresh = function() {    
     $http.get('/gamers').success(function(gamers) {
       gamers.forEach(function(gamer) {
         gamerTagToGamer[gamer.gamerTag] = gamer;
-        gamer.games.forEach(function(game) {
+        (gamer.games || []).forEach(function(game) {
           if (!gameToGamers[game]) {
             gameToGamers[game] = [];
           }
@@ -23630,12 +23739,6 @@ app.controller('GamersCtrl', ['$scope', '$http', function($scope, $http) {
       this.gamerSets = this.groupGamers(angular.copy(gamers));
     }.bind(this));
   }.bind(this);
-
-  this.add = function() {
-    $http.post('/gamers', {gamerTag: self.gamerTag}).success(function(gamer, status) {
-      refresh();
-    });
-  };
 
   this.groupGamers = function(gamers) {
     var result = [];

@@ -10,23 +10,17 @@
     <base href="/">
   </head>
   <body ng-app="app" ng-controller="GamersCtrl as ctrl">    
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12">
-          <header id="site-header">
-            <div class="container">
-              <form name="addmyname" method="POST" ng-submit="ctrl.add()" class="form-inline">
-                I'm looking for someone to game with
-                <input type="text" name="gamertag" placeholder="gamertag" ng-model="ctrl.gamerTag" class="form-control">          
-                <button type="submit" id="add-tag" class="btn btn-default">Add Me</button>
-              </form>
-            </div>
-          </header>
-        </div>
-      </div>      
-      <div class="row">
+    <div class="container" ng-cloak>
+      <header id="site-header">
+        <h1>OneFriends</h1>
+        <button type="button" class="btn" ng-click="ctrl.showModal()">
+          Add Me <span class="glyphicon glyphicon-plus"></span>
+        </button>            
+      </header>
+      <div id="content" class="row">
         <div class="col-md-3 xb-filters">
           <h4>GAMES</h4>
+          <hr/>
           <ul>
             <li ng-repeat="game in ctrl.games">
               <label class="checkbox-inline">
@@ -41,16 +35,18 @@
             <div class="col-md-4" ng-repeat="gamer in gamers">
               <div class="xb-profile">
                 <header>
-                  <img ng-src="{{gamer.xboxdata.avatar.small}}" alt="gamer profile">
+                  <img ng-src="{{gamer.xboxdata.avatar.small}}" alt="gamer img">
                   <div class="xb-labels">
                     <div class="xb-label xb-highlight">{{gamer.gamerTag}}</div>
-                    <div class="xb-label"><em>{{gamer.xboxdata.location}}</em></div>
+                    <div class="xb-label"><em>{{gamer.xboxdata.location || 'n/a'}}</em></div>
                   </div>
                 </header>
                 <hr/>
                 <section>
                   <span class="xb-label">Rep</span>
-                  <div class="xb-value"><span ng-repeat="val in [4, 8, 12, 16, 20]" class="glyphicon"
+                  <div class="xb-value">
+                    <span ng-hide="gamer.xboxdata">n/a</span>
+                    <span ng-show="gamer.xboxdata" ng-repeat="val in [4, 8, 12, 16, 20]" class="glyphicon"
                     ng-class="{'glyphicon-star': gamer.xboxdata.reputation >= val,
                     'glyphicon-star-empty': gamer.xboxdata.reputation < val}"></span>
                   </div>
@@ -58,11 +54,12 @@
                 <hr/>
                 <section>
                   <span class="xb-label">Gamerscore</span>
-                  <span class="xb-value">{{gamer.xboxdata.gamerscore}}</span>
+                  <span class="xb-value">{{gamer.xboxdata.gamerscore || 'n/a'}}</span>
                 </section>
                 <hr/>
                 <section class="xb-games">
-                  <span ng-repeat="game in gamer.games.slice(0, 3)">{{game}},&nbsp;</span>
+                  <span ng-hide="gamer.games.length">No games listed.</span>
+                  <span ng-show="gamer.games" ng-repeat="game in gamer.games.slice(0, 3)">{{game}},&nbsp;</span>
                 </section>
               </div>
             </div>
@@ -70,6 +67,34 @@
         </div>
       </div>
     </div><!-- end container -->
+    <script>
+      var initialData = {
+        games: <%- games %>
+      };
+    </script>
     <script src="js/app.js"></script>
+    <script type="text/ng-template" id="add-me-modal.ng">
+      <div class="btf-modal xb-modal">
+        <h4>Add yourself</h4><hr/>
+        <form role="form" ng-submit="modal.add()">
+          <div class="form-group">
+            <label for="gamertag">Gamertag</label>
+            <input type="gamertag" class="form-control" id="gamertag" placeholder="MasterChief01"
+              ng-model="modal.gamerTag">
+          </div>
+          <div class="form-group">
+            <ul>
+              <li ng-repeat="game in modal.games">
+                <label class="checkbox-inline">
+                  <input type="checkbox" ng-model="game.selected">{{game.label}}
+                </label>
+              </li>
+            </ul>
+          </div>
+          <button type="button" class="btn btn-danger" ng-click="modal.closeMe()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </script>
   </body>
 </html>

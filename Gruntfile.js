@@ -9,6 +9,7 @@ module.exports = function(grunt) {
       dist: {
         src: [
           'bower_components/angular/angular.js',
+          'bower_components/angular-modal/modal.js',
           'bower_components/he/he.js',
           'bower_components/momentjs/moment.js',
           'src/app.js'

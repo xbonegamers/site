@@ -1,4 +1,4 @@
-var app = angular.module('app', []);
+var app = angular.module('app', ['btford.modal']);
 
 app.config(['$locationProvider', function($lp) {
   $lp.html5Mode(true);
@@ -17,32 +17,64 @@ app.filter('decode', ['$window', function($window) {
   };
 }]);
 
-app.controller('GamersCtrl', ['$scope', '$http', function($scope, $http) {
-  this.gamerSets = [];
-  this.games = [{
-    selected: false,
-    label: 'Battlefield 4'
-  }, {
-    selected: false,
-    label: 'Call of Duty: Ghosts'
-  }, {
-    selected: false,
-    label: 'Need For Speed'
-  }, {
-    selected: false,
-    label: 'Titanfall'
-  }];
+app.factory('games', ['$window', function($window) {
+  return $window.initialData.games.map(function(g) {
+    return g.name;
+  });
+}]);
+
+app.factory('myModal', ['btfModal', function (btfModal) {
+  return btfModal({
+    controller: 'AddMeCtrl',
+    controllerAs: 'modal',
+    templateUrl: 'add-me-modal.ng'
+  });
+}]).controller('AddMeCtrl', ['$http', 'myModal', 'games', function ($http, myModal, games) {
+  this.closeMe = myModal.deactivate;
+  this.games = games;
   this.gamerTag = '';
+  this.games = games.map(function(g){ return {label: g, selected: false};});
+
+
+  this.add = function() {
+    var selectedGames = this.games.filter(function(g) {
+      return g.selected;
+    }).map(function(g) {
+      return g.label;
+    });
+    var data = {
+      gamerTag: this.gamerTag,
+      games: selectedGames
+    };
+    $http.post('/gamers', {gamerData: data}).success(function(gamer, status) {
+      myModal.deactivate();
+    });
+  }.bind(this);
+}]);
+
+app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
+  function($scope, $http, myModal, games) {
+  this.showModal = myModal.activate;
+  this.gamerSets = [];
+  this.games = games.map(function(g){ return {label: g, selected: false};});
 
   var gameToGamers = {};
   var gamerTagToGamer = {};
   var nonFilteredGamers = [];
 
+  $scope.$watch(function() {
+    return myModal.active();
+  }, function(newVal, oldVal) {
+    if (!newVal && oldVal) {
+      refresh();
+    }
+  });
+
   var refresh = function() {    
     $http.get('/gamers').success(function(gamers) {
       gamers.forEach(function(gamer) {
         gamerTagToGamer[gamer.gamerTag] = gamer;
-        gamer.games.forEach(function(game) {
+        (gamer.games || []).forEach(function(game) {
           if (!gameToGamers[game]) {
             gameToGamers[game] = [];
           }
@@ -54,12 +86,6 @@ app.controller('GamersCtrl', ['$scope', '$http', function($scope, $http) {
       this.gamerSets = this.groupGamers(angular.copy(gamers));
     }.bind(this));
   }.bind(this);
-
-  this.add = function() {
-    $http.post('/gamers', {gamerTag: self.gamerTag}).success(function(gamer, status) {
-      refresh();
-    });
-  };
 
   this.groupGamers = function(gamers) {
     var result = [];
