@@ -50,7 +50,7 @@ module.exports = function(grunt) {
           args: {} // Target-specific arguments
         }
       }
-    }/*,
+    },
     rev: {
       options: {
         encoding: 'utf8',
@@ -62,7 +62,16 @@ module.exports = function(grunt) {
           src: ['public/css/app.css', 'public/js/app.min.js']
         }]
       }
-    }*/
+    },
+    useminPrepare: {
+      html: 'index.html',
+      options: {
+        dest: 'dist/'
+      }
+    },
+    usemin: {
+      html: 'dist/ndex.html'
+    }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -70,9 +79,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-protractor-runner');
+  grunt.loadNpmTasks('grunt-rev');
+  grunt.loadNpmTasks('grunt-usemin');
 
   grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('build', ['jshint', 'useminPrepare', 'concat', 'uglify', 'rev', 'usemin']);
 
 
 };

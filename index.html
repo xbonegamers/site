@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Find someone to game with!</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="public/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="public/css/app.css" />
     <base href="/">
   </head>
   <body ng-app="app" ng-controller="GamersCtrl as ctrl">    
@@ -77,7 +77,11 @@
       };
     </script>
     <!-- build:js public/js/app.js -->
-    <script src="js/app.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-modal/modal.js"></script>
+    <script src="bower_components/he/he.js"></script>
+    <script src="bower_components/momentjs/moment.js"></script>
+    <script src="public/js/app.js"></script>
     <!-- endbuild -->
     <script type="text/ng-template" id="add-me-modal.ng">
       <div class="btf-modal xb-modal">
