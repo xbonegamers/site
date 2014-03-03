@@ -50,7 +50,19 @@ module.exports = function(grunt) {
           args: {} // Target-specific arguments
         }
       }
-    }
+    }/*,
+    rev: {
+      options: {
+        encoding: 'utf8',
+        algorithm: 'md5',
+        length: 8
+      },
+      assets: {
+        files: [{
+          src: ['public/css/app.css', 'public/js/app.min.js']
+        }]
+      }
+    }*/
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -61,5 +73,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+
 
 };
