@@ -1,4 +1,5 @@
 #!/bin/bash
 
-~/Downloads/mongodb-osx-x86_64-2.4.9/bin/mongo gamerfriends --eval "db.gamers.remove()";
-~/Downloads/mongodb-osx-x86_64-2.4.9/bin/mongoimport --db gamerfriends --collection gamers --file gamers.json --jsonArray
+mongo gamerfriends --eval "db.gamers.remove()";
+mongoimport --db gamerfriends --collection gamers --file gamers.json --jsonArray
+mongoimport --db gamerfriends --collection games --file games.json --jsonArray
