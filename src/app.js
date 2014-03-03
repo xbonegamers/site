@@ -57,6 +57,7 @@ app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
   this.showModal = myModal.activate;
   this.gamerSets = [];
   this.games = games.map(function(g){ return {label: g, selected: false};});
+  this.selectedGames = {};
 
   var gameToGamers = {};
   var gamerTagToGamer = {};
@@ -95,13 +96,19 @@ app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
     return result;
   };
 
+  this.isGameSelected = function(game) {
+    return !!this.selectedGames[game];
+  };
+
   $scope.$watch(function() {
     return this.games;
   }.bind(this), function() {
+    this.selectedGames = {};
     var gamerTags = {};
     var noneSelected = true;
     this.games.forEach(function(game) {
       if (game.selected) {
+        this.selectedGames[game.label] = true;
         noneSelected = false;
         (gameToGamers[game.label] || []).forEach(function(gamer) {
           if (!gamerTags[gamer.gamerTag]) {
@@ -109,7 +116,7 @@ app.controller('GamersCtrl', ['$scope', '$http', 'myModal', 'games',
           }
         });
       }
-    });
+    }, this);
     if (noneSelected) {
       this.gamerSets = this.groupGamers(nonFilteredGamers);
     } else {

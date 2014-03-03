@@ -59,8 +59,10 @@
                 <hr/>
                 <section class="xb-games">
                   <span ng-hide="gamer.games.length">No games listed.</span>
-                  <span ng-show="gamer.games">
-                     {{gamer.games.slice(0, 3).join(', &nbsp;')}}
+                  <span ng-show="gamer.games" ng-repeat="game in gamer.games.slice(0, 5)">
+                     <span ng-class="{'xb-matched': ctrl.isGameSelected(game)}">
+                       {{game}}<span ng-hide="$index == 4 || $index >= gamer.games.length - 1">,</span>
+                     </span>
                   </span>
                 </section>
               </div>

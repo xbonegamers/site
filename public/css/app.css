@@ -98,6 +98,10 @@ ul {
   margin: 5px 0;
 }
 
+.xb-matched {
+  font-weight: bold;
+}
+
 .xb-modal {
   background-color: #fff;
   border-radius: 10px;
