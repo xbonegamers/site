@@ -2,28 +2,6 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
-      options: {
-        separator: ';'
-      },
-      dist: {
-        src: [
-          'bower_components/angular/angular.js',
-          'bower_components/angular-modal/modal.js',
-          'bower_components/he/he.js',
-          'bower_components/momentjs/moment.js',
-          'src/app.js'
-        ],
-        dest: 'public/js/app.js'
-      }
-    },
-    uglify: {
-      dist: {
-        files: {
-          'public/js/app.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
     jshint: {
       files: ['Gruntfile.js', 'src/**/*.js'],
       options: {
@@ -57,11 +35,17 @@ module.exports = function(grunt) {
         algorithm: 'md5',
         length: 8
       },
-      assets: {
-        files: [{
-          src: ['public/css/app.css', 'public/js/app.min.js']
-        }]
-      }
+      dist: {
+        files: {
+          src: [
+            'bower_components/angular/angular.js',
+            'bower_components/angular-modal/modal.js',
+            'bower_components/he/he.js',
+            'bower_components/momentjs/moment.js',
+            'src/app.js'
+          ]
+        }
+      },
     },
     useminPrepare: {
       html: 'index.html',
@@ -70,7 +54,12 @@ module.exports = function(grunt) {
       }
     },
     usemin: {
-      html: 'dist/ndex.html'
+      html: ['dist/index.html'],
+      css: ['dist/css/*.css'],
+      js: ['dist/{,*/}*.js'],
+      options: {
+        dirs: ['dist/']
+      }
     }
   });
 
@@ -84,6 +73,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('watch', ['useminPrepare', 'concat']);
   grunt.registerTask('build', ['jshint', 'useminPrepare', 'concat', 'uglify', 'rev', 'usemin']);
 
 

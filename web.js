@@ -9,6 +9,7 @@ var ejs = require('ejs');
 var Q = require('q');
 
 app.use('/public', express.static(__dirname + '/public'));
+app.use('/src', express.static(__dirname + '/src'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use(express.logger());
 app.use(express.compress());
