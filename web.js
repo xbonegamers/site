@@ -7,10 +7,20 @@ var Gamer = require('./server').schema.Gamer;
 var fs = require('fs');
 var ejs = require('ejs');
 var Q = require('q');
+var env = process.env.NODE_ENV;
 
-app.use('/public', express.static(__dirname + '/public'));
-app.use('/src', express.static(__dirname + '/src'));
-app.use('/bower_components', express.static(__dirname + '/bower_components'));
+var isProduction = function() {
+  return env == 'production';
+};
+
+if (isProduction()) {
+  app.use('/public', express.static(__dirname + '/dist/public/'));
+} else {
+  app.use('/public', express.static(__dirname + '/public'));
+  app.use('/src', express.static(__dirname + '/src'));
+  app.use('/bower_components', express.static(__dirname + '/bower_components'));
+}
+
 app.use(express.logger());
 app.use(express.compress());
 app.use(express.json());
@@ -21,7 +31,8 @@ var escape = function(input) {
 };
 
 var readIndex = function() {
-  return Q.nfcall(fs.readFile, 'index.html', 'utf-8');
+  var path = isProduction() ? 'dist/index.html' : 'index.html';
+  return Q.nfcall(fs.readFile, path, 'utf-8');
 };
 
 var loadGames = function() {
@@ -40,6 +51,7 @@ var loadIndexPage = function() {
 };
 
 app.get('/', function(req, res) {
+  console.log('wtf');
   loadIndexPage().spread(function(indexHTML, games) {
     res.send(ejs.render(indexHTML, {games: JSON.stringify(games)}));
   });

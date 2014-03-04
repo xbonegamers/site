@@ -34,12 +34,41 @@ module.exports = function(grunt) {
       js: {
         src: ['dist/js/app.js'],
         dest: '.tmp/'
+      },
+      css: {
+        src: ['dist/css/app.css'],
+        dest: '.tmp/'
+      }
+    },
+    htmlmin: {
+      dist: {
+        files: [{
+            expand: true,
+            cwd: '.',
+            src: 'index.html',
+            dest: 'dist/'
+        }]
       }
     },
     useminPrepare: {
       html: 'index.html',
       options: {
         dest: 'dist/'
+      }
+    },
+    usemin: {
+      html: 'dist/index.html',
+      options: {
+        assetsDirs: ['dist/js', 'dist/css']
+      }
+    },
+    copy: {
+      main: {
+        src: 'bower_components/bootstrap/dist/fonts/*',
+        dest: 'dist/public/fonts/',
+        filter: 'isFile',
+        flatten: true,
+        expand: true
       }
     }
   });
@@ -48,6 +77,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
+  grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-protractor-runner');
   grunt.loadNpmTasks('grunt-filerev');
   grunt.loadNpmTasks('grunt-usemin');
@@ -55,7 +87,17 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
   grunt.registerTask('watch', ['useminPrepare', 'concat']);
-  grunt.registerTask('build', ['jshint', 'useminPrepare', 'concat', 'uglify', 'filerev']);
+  grunt.registerTask('build', [
+    'jshint',
+    'htmlmin',
+    'useminPrepare',
+    'concat',
+    'uglify',
+    'copy',
+    'cssmin',
+    'filerev',
+    'usemin'
+  ]);
 
 
 };

@@ -5,14 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Find someone to game with!</title>
-    <!-- build:css public/css/app.css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="public/css/app.css" />
-    <!-- endbuild -->
+    <link rel="stylesheet" href="public/css/app.css"/>
     <base href="/">
   </head>
   <body ng-app="app" ng-controller="GamersCtrl as ctrl">    
-    <div class="container" ng-cloak>
+    <div class="container" ng-cloak="">
       <header id="site-header">
         <h1>xbonegamers</h1>
         <button type="button" class="btn" ng-click="ctrl.showModal()">
@@ -22,7 +19,7 @@
       <div id="content" class="row">
         <div class="col-md-3 xb-filters">
           <h4>GAMES</h4>
-          <hr/>
+          <hr>
           <ul>
             <li ng-repeat="game in ctrl.games">
               <label class="checkbox-inline">
@@ -33,7 +30,7 @@
         </div>
         <div class="col-md-9">
           <h4>GAMERS</h4>
-          <div class="row" ng-cloak ng-repeat="gamers in ctrl.gamerSets">
+          <div class="row" ng-cloak="" ng-repeat="gamers in ctrl.gamerSets">
             <div class="col-md-4" ng-repeat="gamer in gamers">
               <div class="xb-profile">
                 <header>
@@ -43,22 +40,21 @@
                     <div class="xb-label"><em>{{gamer.xboxdata.location || 'n/a'}}</em></div>
                   </div>
                 </header>
-                <hr/>
+                <hr>
                 <section>
                   <span class="xb-label">Rep</span>
                   <div class="xb-value">
                     <span ng-hide="gamer.xboxdata">n/a</span>
-                    <span ng-show="gamer.xboxdata" ng-repeat="val in [4, 8, 12, 16, 20]" class="glyphicon"
-                    ng-class="{'glyphicon-star': gamer.xboxdata.reputation >= val,
+                    <span ng-show="gamer.xboxdata" ng-repeat="val in [4, 8, 12, 16, 20]" class="glyphicon" ng-class="{'glyphicon-star': gamer.xboxdata.reputation >= val,
                     'glyphicon-star-empty': gamer.xboxdata.reputation < val}"></span>
                   </div>
                 </section>
-                <hr/>
+                <hr>
                 <section>
                   <span class="xb-label">Gamerscore</span>
                   <span class="xb-value">{{gamer.xboxdata.gamerscore || 'n/a'}}</span>
                 </section>
-                <hr/>
+                <hr>
                 <section class="xb-games">
                   <span ng-hide="gamer.games.length">No games listed.</span>
                   <span ng-show="gamer.games" ng-repeat="game in gamer.games.slice(0, 5)">
@@ -78,13 +74,7 @@
         games: <%- games %>
       };
     </script>
-    <!-- build:js public/js/app.js -->
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-modal/modal.js"></script>
-    <script src="bower_components/he/he.js"></script>
-    <script src="bower_components/momentjs/moment.js"></script>
-    <script src="src/app.js"></script>
-    <!-- endbuild -->
+    <script src="public/js/app.js"></script>
     <script type="text/ng-template" id="add-me-modal.ng">
       <div class="btf-modal xb-modal">
         <h4>Add yourself</h4><hr/>
