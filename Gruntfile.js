@@ -25,36 +25,21 @@ module.exports = function(grunt) {
         }
       }
     },
-    rev: {
+    filerev: {
       options: {
         encoding: 'utf8',
         algorithm: 'md5',
-        length: 8
+        length: 10
       },
-      dist: {
-        files: {
-          src: [
-            'bower_components/angular/angular.js',
-            'bower_components/angular-modal/modal.js',
-            'bower_components/he/he.js',
-            'bower_components/momentjs/moment.js',
-            'src/app.js'
-          ]
-        }
-      },
+      js: {
+        src: ['dist/js/app.js'],
+        dest: '.tmp/'
+      }
     },
     useminPrepare: {
       html: 'index.html',
       options: {
         dest: 'dist/'
-      }
-    },
-    usemin: {
-      html: ['dist/index.html'],
-      css: ['dist/css/*.css'],
-      js: ['dist/{,*/}*.js'],
-      options: {
-        dirs: ['dist/']
       }
     }
   });
@@ -64,13 +49,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-protractor-runner');
-  grunt.loadNpmTasks('grunt-rev');
+  grunt.loadNpmTasks('grunt-filerev');
   grunt.loadNpmTasks('grunt-usemin');
 
   grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
   grunt.registerTask('watch', ['useminPrepare', 'concat']);
-  grunt.registerTask('build', ['jshint', 'useminPrepare', 'concat', 'uglify', 'rev', 'usemin']);
+  grunt.registerTask('build', ['jshint', 'useminPrepare', 'concat', 'uglify', 'filerev']);
 
 
 };
