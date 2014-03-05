@@ -32,12 +32,10 @@ module.exports = function(grunt) {
         length: 10
       },
       js: {
-        src: ['dist/js/app.js'],
-        dest: '.tmp/'
+        src: 'dist/public/js/app.js'
       },
       css: {
-        src: ['dist/css/app.css'],
-        dest: '.tmp/'
+        src: 'dist/public/css/app.css'
       }
     },
     htmlmin: {
@@ -57,10 +55,7 @@ module.exports = function(grunt) {
       }
     },
     usemin: {
-      html: 'dist/index.html',
-      options: {
-        assetsDirs: ['dist/js', 'dist/css']
-      }
+      html: 'dist/index.html'
     },
     copy: {
       main: {
